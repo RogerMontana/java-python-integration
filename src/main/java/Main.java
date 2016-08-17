@@ -8,29 +8,26 @@ public class Main {
 
 	public static void main(String a[]) {
 
-		String invalidJson = "{\"id\": \"123\", \"ua\":\"Mozilla/firefox lg4.5\" 1.2123\"}";
+		String jsonToFix = "{\"id\": \"123\", \"ua\":\"Mozilla/firefox lg4.5\" 1.2123\"}";
 
-		Properties props = new Properties();
-		props.put("python.home", "/usr/lib/python2.7");
-		props.put("python.console.encoding",
+		Properties userProps = new Properties();
+		userProps.put("python.home", "/usr/lib/python2.7");
+		userProps.put("python.console.encoding",
 				"UTF-8");
-		props.put("python.security.respectJavaAccessibility",
+		userProps.put("python.security.respectJavaAccessibility",
 				"false");
-		props.put("python.import.site", "false");
+		userProps.put("python.import.site", "false");
 
+		Properties sysProps = System.getProperties();
 
-		Properties preprops = System.getProperties();
-
-		PythonInterpreter.initialize(preprops, props, new String[0]);
-
+		PythonInterpreter.initialize(sysProps, userProps, new String[0]);
 
 		PythonInterpreter python = new PythonInterpreter();
 
-
-		PyObject jsonInvalid = new PyString(invalidJson);
-		python.execfile("/json.py");
+		PyObject pyObjectJson = new PyString(jsonToFix);
+		python.execfile("src/main/resources/json.py");
 		PyFunction pyFuntion = (PyFunction) python.get("parse_invalid_json", PyFunction.class);
-		PyObject resultFromScript = pyFuntion.__call__(jsonInvalid);
+		PyObject resultFromScript = pyFuntion.__call__(pyObjectJson);
 
 		System.out.println("val : " + resultFromScript.toString());
 	}
